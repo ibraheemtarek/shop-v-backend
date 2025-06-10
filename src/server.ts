@@ -52,9 +52,9 @@ app.use('/api/orders', csrfProtect, orderRoutes);
 app.use('/api/cart', csrfProtect, cartRoutes);
 app.use('/api/auth', authRoutes); 
 
-// app.get('/api/health', (req: Request, res: Response) => {
-//   res.status(200).json({ status: 'ok', message: 'Server is running' });
-// });
+app.get('/api/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok', message: 'Server is running' });
+});
 
 app.use(notFound);
 app.use(errorHandler);
