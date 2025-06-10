@@ -10,6 +10,7 @@ import {
   resetPassword
 } from '../controllers/userController';
 import { protect } from '../middleware/authMiddleware';
+import { csrfProtect } from '../middleware/csrfMiddleware';
 import { asyncHandler } from '../utils/routeUtils';
 import {
   registerValidation,
@@ -25,16 +26,16 @@ import { validate } from '../middleware/validators/validatorUtils';
 const router = express.Router();
 
 // Public routes
-router.post('/register', validate(registerValidation), asyncHandler(registerUser));
+router.post('/register', csrfProtect, validate(registerValidation), asyncHandler(registerUser));
 // Password reset routes
-router.post('/forgot-password', validate(forgotPasswordValidation), asyncHandler(forgotPassword));
-router.post('/reset-password', validate(resetPasswordValidation), asyncHandler(resetPassword));
+router.post('/forgot-password', csrfProtect, validate(forgotPasswordValidation), asyncHandler(forgotPassword));
+router.post('/reset-password', csrfProtect, validate(resetPasswordValidation), asyncHandler(resetPassword));
 
 // Protected routes
 router.get('/profile', protect, asyncHandler(getUserProfile));
-router.put('/profile', protect, validate(updateProfileValidation), asyncHandler(updateUserProfile));
-router.post('/wishlist', protect, validate(wishlistAddValidation), asyncHandler(addToWishlist));
-router.delete('/wishlist/:productId', protect, validate(wishlistRemoveValidation), asyncHandler(removeFromWishlist));
+router.put('/profile', protect, csrfProtect, validate(updateProfileValidation), asyncHandler(updateUserProfile));
+router.post('/wishlist', protect, csrfProtect, validate(wishlistAddValidation), asyncHandler(addToWishlist));
+router.delete('/wishlist/:productId', protect, csrfProtect, validate(wishlistRemoveValidation), asyncHandler(removeFromWishlist));
 router.get('/wishlist', protect, asyncHandler(getWishlist));
 
 export default router;

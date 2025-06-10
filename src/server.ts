@@ -47,9 +47,9 @@ app.use('/api/categories', categoryRoutes);
 
 app.get('/api/csrf-token', generateCsrfToken);
 
-app.use('/api/users', csrfProtect, userRoutes);
-app.use('/api/orders', csrfProtect, orderRoutes);
-app.use('/api/cart', csrfProtect, cartRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/auth', authRoutes); 
 
 app.get('/api/health', (req: Request, res: Response) => {

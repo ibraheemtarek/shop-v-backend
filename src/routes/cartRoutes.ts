@@ -1,4 +1,5 @@
 import express from 'express';
+import { csrfProtect } from '../middleware/csrfMiddleware';
 import {
   getUserCart,
   addToCart,
@@ -18,9 +19,9 @@ const router = express.Router();
 
 // All routes are protected
 router.get('/', protect, getUserCart);
-router.post('/add', protect, validate(addToCartValidation), addToCart);
-router.put('/:productId', protect, validate(updateCartItemValidation), updateCartItem);
-router.delete('/:productId', protect, validate(removeFromCartValidation), removeFromCart);
-router.delete('/', protect, clearCart);
+router.post('/add', protect, csrfProtect, validate(addToCartValidation), addToCart);
+router.put('/:productId', protect, csrfProtect, validate(updateCartItemValidation), updateCartItem);
+router.delete('/:productId', protect, csrfProtect, validate(removeFromCartValidation), removeFromCart);
+router.delete('/', protect, csrfProtect, clearCart);
 
 export default router;

@@ -1,4 +1,5 @@
 import express from 'express';
+import { csrfProtect } from '../middleware/csrfMiddleware';
 import {
   getProducts,
   getProductById,
@@ -35,6 +36,7 @@ router.get('/:id', validate(productIdValidation), getProductById);
 router.post('/', 
   protect, 
   admin, 
+  csrfProtect,
   validate(createProductValidation), 
   handleSingleUpload, 
   handleMultipleUploads, 
@@ -44,6 +46,7 @@ router.post('/',
 router.put('/:id', 
   protect, 
   admin, 
+  csrfProtect,
   validate([...productIdValidation, ...updateProductValidation]), 
   handleSingleUpload, 
   handleMultipleUploads, 
@@ -51,12 +54,13 @@ router.put('/:id',
   updateProduct
 );
 
-router.delete('/:id', protect, admin, validate(productIdValidation), deleteProduct);
+router.delete('/:id', protect, admin, csrfProtect, validate(productIdValidation), deleteProduct);
 
 // New routes for separate image handling
 router.post('/:id/image', 
   protect, 
   admin, 
+  csrfProtect,
   validate(productIdValidation),
   handleSingleUpload,
   uploadProductImage
@@ -65,6 +69,7 @@ router.post('/:id/image',
 router.post('/:id/images', 
   protect, 
   admin, 
+  csrfProtect,
   validate(productIdValidation),
   handleMultipleUploads,
   uploadProductImages
@@ -73,6 +78,7 @@ router.post('/:id/images',
 router.delete('/:productId/image/:imageIndex', 
   protect, 
   admin, 
+  csrfProtect,
   deleteProductImage
 );
 
