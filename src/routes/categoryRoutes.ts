@@ -26,15 +26,14 @@ router.get('/', getCategories);
 router.get('/:slug', validate(categorySlugValidation), getCategoryBySlug);
 
 // Protected routes (admin only)
-router.post('/', protect, admin, csrfProtect, validate(createCategoryValidation), createCategory);
-router.put('/:id', protect, admin, csrfProtect, validate([...categoryIdValidation, ...updateCategoryValidation]), updateCategory);
-router.delete('/:id', protect, admin, csrfProtect, validate(categoryIdValidation), deleteCategory);
+router.post('/', protect, admin, validate(createCategoryValidation), createCategory);
+router.put('/:id', protect, admin, validate([...categoryIdValidation, ...updateCategoryValidation]), updateCategory);
+router.delete('/:id', protect, admin, validate(categoryIdValidation), deleteCategory);
 
 // Separate routes for category image handling
 router.post('/:id/image', 
   protect, 
   admin, 
-  csrfProtect,
   validate(categoryIdValidation),
   handleCategoryImageUpload,
   handleCategoryImageReplacement,
@@ -44,7 +43,6 @@ router.post('/:id/image',
 router.delete('/:id/image', 
   protect, 
   admin, 
-  csrfProtect,
   validate(categoryIdValidation),
   deleteCategoryImage
 );

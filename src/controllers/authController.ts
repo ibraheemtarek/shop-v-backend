@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
-import { generateAccessToken, generateRefreshToken } from '../utils/tokenUtils';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/tokenUtils';
 
 /**
  * Login user and generate access and refresh tokens
@@ -9,23 +9,42 @@ import { generateAccessToken, generateRefreshToken } from '../utils/tokenUtils';
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
-
+    const existingRefreshToken = req.cookies.refreshToken;
+    
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
       const accessToken = generateAccessToken(user._id);
-      const refreshToken = generateRefreshToken(user._id);
+      let refreshToken = existingRefreshToken;
       
-      user.refreshToken = user.refreshToken ? 
-        [...user.refreshToken, refreshToken] : 
-        [refreshToken];
-      await user.save();
+      if (existingRefreshToken) {
+        try {
+          const decoded = verifyRefreshToken(existingRefreshToken);
+          
+          const tokenExists = user.refreshToken?.includes(existingRefreshToken);
+          
+          if (!tokenExists || decoded.id !== user._id.toString()) {
+            refreshToken = generateRefreshToken(user._id);
+          }
+        } catch (error) {
+          refreshToken = generateRefreshToken(user._id);
+        }
+      } else {
+        refreshToken = generateRefreshToken(user._id);
+      }
+      
+      if (!existingRefreshToken || !user.refreshToken?.includes(refreshToken)) {
+        user.refreshToken = user.refreshToken ? 
+          [...user.refreshToken, refreshToken] : 
+          [refreshToken];
+        await user.save();
+      }
       
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
       res.status(200).json({
@@ -102,7 +121,6 @@ export const logoutUser = async (req: Request, res: Response): Promise<void> => 
   try {
     const refreshToken = req.cookies.refreshToken;
     
-    // Get the access token from the Authorization header
     let accessToken;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       accessToken = req.headers.authorization.split(' ')[1];
@@ -113,7 +131,6 @@ export const logoutUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
     
-    // Handle refresh token
     if (refreshToken) {
       const user = await User.findOne({ refreshToken: { $in: [refreshToken] } });
       
@@ -129,12 +146,9 @@ export const logoutUser = async (req: Request, res: Response): Promise<void> => 
       });
     }
     
-    // Add access token to blacklist if it exists
     if (accessToken) {
-      // Import TokenBlacklist at the top of the file
       const TokenBlacklist = (await import('../models/TokenBlacklist')).default;
       
-      // Add token to blacklist
       await new TokenBlacklist({
         token: accessToken,
         createdAt: new Date()

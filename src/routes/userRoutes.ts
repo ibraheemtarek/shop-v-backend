@@ -26,10 +26,10 @@ import { validate } from '../middleware/validators/validatorUtils';
 const router = express.Router();
 
 // Public routes
-router.post('/register', csrfProtect, validate(registerValidation), asyncHandler(registerUser));
+router.post('/register', validate(registerValidation), asyncHandler(registerUser));
 // Password reset routes
-router.post('/forgot-password', csrfProtect, validate(forgotPasswordValidation), asyncHandler(forgotPassword));
-router.post('/reset-password', csrfProtect, validate(resetPasswordValidation), asyncHandler(resetPassword));
+router.post('/forgot-password', validate(forgotPasswordValidation), asyncHandler(forgotPassword));
+router.post('/reset-password', validate(resetPasswordValidation), asyncHandler(resetPassword));
 
 // Protected routes
 router.get('/profile', protect, asyncHandler(getUserProfile));
