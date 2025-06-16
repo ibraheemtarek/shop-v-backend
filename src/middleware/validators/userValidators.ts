@@ -22,6 +22,22 @@ export const registerValidation = [
     .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
     .matches(/[a-zA-Z]/).withMessage('Password must contain at least one letter')
     .matches(/\d/).withMessage('Password must contain at least one number'),
+  
+  body('confirmPassword')
+    .notEmpty().withMessage('Confirm password is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Password confirmation does not match password');
+      }
+      return true;
+    }),
+  body('agreeTerms')
+    .notEmpty().isBoolean().custom((value) => {
+      if (value !== "true" || value !== true) {
+        throw new Error('You must agree to the terms and conditions');
+      }
+      return true;
+    }),
 ];
 
 // Login validation

@@ -8,8 +8,8 @@ import { validate } from '../middleware/validators/validatorUtils';
 
 const router = express.Router();
 
-router.post('/login', csrfProtect, validate(loginValidation), asyncHandler(loginUser));
-router.post('/refresh', csrfProtect, validate(refreshTokenValidation), asyncHandler(refreshToken));
-router.post('/logout', csrfProtect, validate(logoutValidation), asyncHandler(logoutUser));
+router.post('/login', validate(loginValidation), asyncHandler(loginUser));
+router.post('/refresh', validate(refreshTokenValidation), asyncHandler(refreshToken));
+router.post('/logout', validate(logoutValidation), asyncHandler(logoutUser));
 
 export default router;
