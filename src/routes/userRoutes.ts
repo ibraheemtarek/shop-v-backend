@@ -33,9 +33,9 @@ router.post('/reset-password', validate(resetPasswordValidation), asyncHandler(r
 
 // Protected routes
 router.get('/profile', protect, asyncHandler(getUserProfile));
-router.put('/profile', protect, csrfProtect, validate(updateProfileValidation), asyncHandler(updateUserProfile));
-router.post('/wishlist', protect, csrfProtect, validate(wishlistAddValidation), asyncHandler(addToWishlist));
-router.delete('/wishlist/:productId', protect, csrfProtect, validate(wishlistRemoveValidation), asyncHandler(removeFromWishlist));
+router.put('/profile', protect, validate(updateProfileValidation), asyncHandler(updateUserProfile));
+router.post('/wishlist', protect, validate(wishlistAddValidation), asyncHandler(addToWishlist));
+router.delete('/wishlist/:productId', protect, validate(wishlistRemoveValidation), asyncHandler(removeFromWishlist));
 router.get('/wishlist', protect, asyncHandler(getWishlist));
 
 export default router;

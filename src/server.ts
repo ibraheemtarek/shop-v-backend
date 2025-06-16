@@ -45,7 +45,7 @@ app.use('/api', apiLimiter);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 
-app.get('/api/csrf-token', generateCsrfToken);
+// app.get('/api/csrf-token', generateCsrfToken);
 
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
