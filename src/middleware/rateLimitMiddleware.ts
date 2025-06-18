@@ -12,7 +12,7 @@ export const apiLimiter = rateLimit({
 // More strict rate limiter for authentication routes
 export const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, 
-  limit: 10, 
+  limit: process.env.NODE_ENV === 'production' ? 10 : 100, // Higher limit for development
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { message: 'Too many login attempts, please try again later.' },

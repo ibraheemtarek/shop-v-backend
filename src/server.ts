@@ -35,13 +35,13 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.use(securityHeaders);
 
+// Apply specific rate limiters first
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/refresh', authLimiter);
 app.use('/api/users/register', registerLimiter);
 app.use('/api/users/forgot-password', passwordResetLimiter);
 
-app.use('/api', apiLimiter);
-
+// Apply routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 
