@@ -23,6 +23,9 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy - needed for express-rate-limit when behind a reverse proxy
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : true,
   credentials: true 
