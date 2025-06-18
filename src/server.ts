@@ -26,34 +26,27 @@ const PORT = process.env.PORT || 5000;
 // Trust proxy - needed for express-rate-limit when behind a reverse proxy
 app.set('trust proxy', 1);
 
+app.use(cookieParser()); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : true,
   credentials: true 
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); 
+app.use(securityHeaders);
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-app.use(securityHeaders);
-
-// Apply specific rate limiters first
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/refresh', authLimiter);
-app.use('/api/users/register', registerLimiter);
-app.use('/api/users/forgot-password', passwordResetLimiter);
-
 // Apply routes
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/auth', authRoutes); 
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 
 // app.get('/api/csrf-token', generateCsrfToken);
 
-app.use('/api/users', userRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/auth', authRoutes); 
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });

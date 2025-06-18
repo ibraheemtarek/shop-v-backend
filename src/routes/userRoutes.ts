@@ -22,13 +22,15 @@ import {
   resetPasswordValidation
 } from '../middleware/validators/userValidators';
 import { validate } from '../middleware/validators/validatorUtils';
+import { registerLimiter } from '../middleware/rateLimitMiddleware';
+import { passwordResetLimiter } from '../middleware/rateLimitMiddleware';
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', validate(registerValidation), asyncHandler(registerUser));
+router.post('/register', registerLimiter, validate(registerValidation), asyncHandler(registerUser));
 // Password reset routes
-router.post('/forgot-password', validate(forgotPasswordValidation), asyncHandler(forgotPassword));
+router.post('/forgot-password', passwordResetLimiter, validate(forgotPasswordValidation), asyncHandler(forgotPassword));
 router.post('/reset-password', validate(resetPasswordValidation), asyncHandler(resetPassword));
 
 // Protected routes
