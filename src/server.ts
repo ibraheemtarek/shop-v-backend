@@ -20,6 +20,11 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 }
 
+// Define allowed origins for CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.TEST_URL,
+].filter(Boolean) as string[]; // Filter out undefined values
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,7 +35,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : true,
+  origin: process.env.NODE_ENV === 'production' ? allowedOrigins : true,
   credentials: true 
 }));
 app.use(securityHeaders);
