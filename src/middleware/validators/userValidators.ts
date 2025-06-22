@@ -31,12 +31,14 @@ export const registerValidation = [
       }
       return true;
     }),
-  body('agreeTerms')
-    .notEmpty().isBoolean().custom((value) => {
-      if (value !== "true" || value !== true) {
-        throw new Error('You must agree to the terms and conditions');
+    body('agreeTerms')
+    .notEmpty().withMessage('Terms agreement is required')
+    .custom((value) => {
+      // Check if the value is either boolean true or string "true"
+      if (value === true || value === "true") {
+        return true;
       }
-      return true;
+      throw new Error('You must agree to the terms and conditions');
     }),
 ];
 
