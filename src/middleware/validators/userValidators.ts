@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 // Registration validation
 export const registerValidation = [
@@ -143,6 +143,6 @@ export const resetPasswordValidation = [
       return true;
     }),
   
-  param('token')
+  query('token')
     .notEmpty().withMessage('Reset token is required')
 ];
