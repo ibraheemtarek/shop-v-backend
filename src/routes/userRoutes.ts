@@ -7,9 +7,10 @@ import {
   removeFromWishlist,
   getWishlist,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  getAllUsers
 } from '../controllers/userController';
-import { protect } from '../middleware/authMiddleware';
+import { admin, protect } from '../middleware/authMiddleware';
 import { csrfProtect } from '../middleware/csrfMiddleware';
 import { asyncHandler } from '../utils/routeUtils';
 import {
@@ -35,6 +36,7 @@ router.post('/reset-password', validate(resetPasswordValidation), asyncHandler(r
 
 // Protected routes
 router.get('/profile', protect, asyncHandler(getUserProfile));
+router.get('/all', protect, admin, asyncHandler(getAllUsers));
 router.put('/profile', protect, validate(updateProfileValidation), asyncHandler(updateUserProfile));
 router.post('/wishlist', protect, validate(wishlistAddValidation), asyncHandler(addToWishlist));
 router.delete('/wishlist/:productId', protect, validate(wishlistRemoveValidation), asyncHandler(removeFromWishlist));

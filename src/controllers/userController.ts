@@ -66,6 +66,24 @@ export const getUserProfile = async (req: Request & { user?: IUser }, res: Respo
   }
 };
 
+export const getAllUsers = async (req: Request & { user?: IUser }, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'Not authorized' }); return;
+    }
+
+    const users = await User.find().select('-password');
+    
+    if (users) {
+      res.status(200).json(users);
+    } else {
+      res.status(404).json({ message: 'Users not found' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Update user profile
 export const updateUserProfile = async (req: Request & { user?: IUser }, res: Response): Promise<void> => {
   try {
